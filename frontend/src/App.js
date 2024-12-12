@@ -5,70 +5,75 @@ import BookList from './components/bookList';
 
 const App = () => {
     const [books, setBooks] = useState([]);
-    const [editingBook, setEditingBook] = useState(null); // Track the book being edited
+    const [editingBook, setEditingBook] = useState(null);
 
-    // Fetch books from the backend
+    
     useEffect(() => {
         axios.get('http://localhost:5000/api/books')
             .then((response) => setBooks(response.data))
-            .catch((error) => console.log('Error fetching books:', error));
+            .catch((error) => console.error('Error fetching books:', error));
     }, []);
 
-    // Add a new book
+    
     const addBook = (newBook) => {
         axios.post('http://localhost:5000/api/books', newBook)
-            .then((response) => setBooks([...books, response.data]))
-            .catch((error) => console.log('Error adding book:', error));
+            .then((response) => {
+                setBooks([...books, response.data]); // Update the state
+                alert('Book added successfully!'); // Display a pop-up
+            })
+            .catch((error) => {
+                console.log('Error adding book:', error);
+                alert('Failed to add book. Please try again.');
+            });
     };
 
-    // Delete a book
+    
     const deleteBook = (id) => {
         axios.delete(`http://localhost:5000/api/books/${id}`)
             .then(() => setBooks(books.filter((book) => book._id !== id)))
-            .catch((error) => console.log('Error deleting book:', error));
+            .catch((error) => console.error('Error deleting book:', error));
     };
 
-    // Update a book
+    
     const updateBook = (updatedBook) => {
         axios.put(`http://localhost:5000/api/books/${updatedBook._id}`, updatedBook)
             .then((response) => {
-                setBooks(books.map((book) =>
+                setBooks(books.map((book) => 
                     book._id === response.data._id ? response.data : book
                 ));
-                setEditingBook(null); // Exit edit mode
+                setEditingBook(null);
             })
-            .catch((error) => console.log('Error updating book:', error));
+            .catch((error) => console.error('Error updating book:', error));
     };
 
     return (
-        <div className="bg-lightGray min-h-screen flex justify-center items-center overflow-auto">
-            <div className="w-full max-w-5xl bg-white rounded-lg shadow-lg p-8">
-                <header className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-primary">Book Management System</h1>
-                    <p className="text-lg text-darkGray mt-2">Add, manage, and track your books</p>
+        <div className="bg-gray-100 min-h-screen flex justify-center items-center">
+            <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6 lg:p-10">
+                <header className="text-center mb-6">
+                    <h1 className="text-3xl lg:text-4xl font-bold text-blue-600">Book Management System</h1>
+                    <p className="text-gray-600">Manage your books effortlessly</p>
                 </header>
 
-                <main className="h-[80vh] overflow-y-auto">
-                    <div className="flex flex-col lg:flex-row gap-8">
-                        <div className="w-full lg:w-1/3">
-                            <BookForm
-                                onAddBook={addBook}
-                                onUpdateBook={updateBook}
-                                editingBook={editingBook}
-                                setEditingBook={setEditingBook}
-                            />
-                        </div>
-                        <div className="w-full lg:w-2/3">
-                            <BookList
-                                books={books}
-                                onDeleteBook={deleteBook}
-                                onEditBook={setEditingBook}
-                            />
-                        </div>
+                <main className="flex flex-col lg:flex-row gap-6">
+                    <div className="w-full lg:w-1/3">
+                        <BookForm
+                            onAddBook={addBook}
+                            onUpdateBook={updateBook}
+                            editingBook={editingBook}
+                            setEditingBook={setEditingBook}
+                        />
+                    </div>
+
+                    <div className="w-full lg:w-2/3 overflow-y-auto h-[70vh]">
+                        <BookList
+                            books={books}
+                            onDeleteBook={deleteBook}
+                            onEditBook={setEditingBook}
+                        />
                     </div>
                 </main>
 
-                <footer className="text-center text-darkGray mt-8">
+                <footer className="text-center mt-6 text-gray-500">
                     <p>&copy; 2024 Book Management System. All Rights Reserved.</p>
                 </footer>
             </div>
