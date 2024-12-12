@@ -7,19 +7,19 @@ const App = () => {
     const [books, setBooks] = useState([]);
     const [editingBook, setEditingBook] = useState(null);
 
-    
+    // Fetch books when the component mounts
     useEffect(() => {
         axios.get('http://localhost:5000/api/books')
             .then((response) => setBooks(response.data))
             .catch((error) => console.error('Error fetching books:', error));
     }, []);
 
-    
+    // Add new book
     const addBook = (newBook) => {
         axios.post('http://localhost:5000/api/books', newBook)
             .then((response) => {
-                setBooks([...books, response.data]); // Update the state
-                alert('Book added successfully!'); // Display a pop-up
+                setBooks((prevBooks) => [...prevBooks, response.data]); // Add the new book to the list
+                alert('Book added successfully!'); // Show success message
             })
             .catch((error) => {
                 console.log('Error adding book:', error);
@@ -27,21 +27,21 @@ const App = () => {
             });
     };
 
-    
+    // Delete a book
     const deleteBook = (id) => {
         axios.delete(`http://localhost:5000/api/books/${id}`)
-            .then(() => setBooks(books.filter((book) => book._id !== id)))
+            .then(() => setBooks(books.filter((book) => book._id !== id))) // Remove the deleted book from the list
             .catch((error) => console.error('Error deleting book:', error));
     };
 
-    
+    // Update book details
     const updateBook = (updatedBook) => {
         axios.put(`http://localhost:5000/api/books/${updatedBook._id}`, updatedBook)
             .then((response) => {
                 setBooks(books.map((book) => 
                     book._id === response.data._id ? response.data : book
                 ));
-                setEditingBook(null);
+                setEditingBook(null); // Reset the editing state
             })
             .catch((error) => console.error('Error updating book:', error));
     };
