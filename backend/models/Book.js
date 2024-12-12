@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 
 const bookSchema = new mongoose.Schema({
@@ -16,8 +15,8 @@ const bookSchema = new mongoose.Schema({
   publishedYear: {
     type: Number,
     required: true,
-  },
-}, { timestamps: true });
+  }
+}
 
 const Book = mongoose.model('Book', bookSchema);
 
