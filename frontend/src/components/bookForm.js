@@ -1,80 +1,71 @@
 import React, { useState, useEffect } from 'react';
 
 const BookForm = ({ onAddBook, onUpdateBook, editingBook, setEditingBook }) => {
-    const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
-    const [description, setDescription] = useState('');
-    const [publishedYear, setPublishedYear] = useState('');
+    const [book, setBook] = useState({ title: '', author: '', description: '', publishedYear: '' });
 
     useEffect(() => {
         if (editingBook) {
-            setTitle(editingBook.title);
-            setAuthor(editingBook.author);
-            setDescription(editingBook.description);
-            setPublishedYear(editingBook.publishedYear);
+            setBook(editingBook); // Pre-fill form if editing a book
         }
     }, [editingBook]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        const bookData = { title, author, description, publishedYear };
-
         if (editingBook) {
-            onUpdateBook({ ...bookData, _id: editingBook._id });
+            onUpdateBook(book); // Update the book
         } else {
-            onAddBook(bookData);
+            onAddBook(book); // Add new book
         }
-
-        resetForm();
-    };
-
-    const resetForm = () => {
-        setTitle('');
-        setAuthor('');
-        setDescription('');
-        setPublishedYear('');
-        setEditingBook(null);
+        setBook({ title: '', author: '', description: '', publishedYear: '' }); // Reset form
     };
 
     return (
-        <div className="bg-white shadow-custom rounded-lg p-6">
-            <h2 className="text-2xl font-semibold text-primary mb-4">
-                {editingBook ? 'Edit Book' : 'Add a New Book'}
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">
+                {editingBook ? 'Update Book' : 'Add New Book'}
             </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="mb-4">
+                <label className="block text-gray-700">Title</label>
                 <input
                     type="text"
-                    placeholder="Book Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={book.title}
+                    onChange={(e) => setBook({ ...book, title: e.target.value })}
+                    className="w-full p-3 border rounded-md"
+                    required
                 />
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Author</label>
                 <input
                     type="text"
-                    placeholder="Author"
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={book.author}
+                    onChange={(e) => setBook({ ...book, author: e.target.value })}
+                    className="w-full p-3 border rounded-md"
+                    required
                 />
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Description</label>
                 <textarea
-                    placeholder="Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={book.description}
+                    onChange={(e) => setBook({ ...book, description: e.target.value })}
+                    className="w-full p-3 border rounded-md"
                 />
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Published Year</label>
                 <input
                     type="number"
-                    placeholder="Published Year"
-                    value={publishedYear}
-                    onChange={(e) => setPublishedYear(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={book.publishedYear}
+                    onChange={(e) => setBook({ ...book, publishedYear: e.target.value })}
+                    className="w-full p-3 border rounded-md"
+                    required
                 />
-                <button type="submit" className="w-full p-3 bg-primary text-white rounded-md hover:bg-secondary transition duration-200">
-                    {editingBook ? 'Update Book' : 'Add Book'}
-                </button>
-            </form>
-        </div>
+            </div>
+            <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-md">
+                {editingBook ? 'Update Book' : 'Add Book'}
+            </button>
+        </form>
     );
 };
 
